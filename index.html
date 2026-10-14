@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111214">
+<title>Heide Park · Wartezeit-Rechner</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111214;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:15px 12px 30px}
+main{max-width:560px;margin:auto}.panel{background:#27282d;border-radius:25px;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 17px}h1{font-size:21px;line-height:1.2;margin:0}
+.chip{background:#183d29;color:#80e69a;border-radius:50px;padding:8px 10px;font-size:12px;font-weight:700}
+.form{background:#070708;border-radius:20px;padding:17px 14px 15px}.field{margin-bottom:16px}
+label{display:block;font-weight:650;font-size:16px;margin-bottom:7px;line-height:1.35}
+select,input[type=number]{color:#fff;background:#303139;border:1px solid #555963;border-radius:12px;min-height:56px;padding:12px;font-size:17px;width:100%}
+select{color-scheme:dark}select:focus,input:focus,button:focus,summary:focus{outline:2px solid #96bff9;outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid>*{min-width:0}
+.hint{font-size:13px;color:#bbc1cc;line-height:1.45;margin:7px 0}.queue-area{border:1px solid #474a53;border-radius:15px;padding:13px;margin-bottom:16px}
+.queue-area h2{font-size:16px;margin:0 0 10px}
+details{border-top:1px solid #393b41;padding-top:9px}summary{cursor:pointer;font-weight:700;color:#dae5fa;padding:6px 0 13px}
+button{width:100%;min-height:56px;font-size:18px;font-weight:800;color:white;border:0;border-radius:13px;background:#3e80d0;margin-top:15px;cursor:pointer}
+.result{background:#24518e;border-radius:20px;text-align:center;margin-top:16px;padding:21px 12px}
+.result .label{color:#dbe9ff;font-size:13px;font-weight:800;letter-spacing:.06em}
+.result strong{display:block;font-size:63px;font-variant-numeric:tabular-nums;line-height:1.1;margin:8px 0 0}
+.result .unit{font-size:18px;font-weight:700}.meta{font-size:13px;line-height:1.5;color:#e0eafb;margin-top:12px}
+.footer{font-size:12px;line-height:1.5;color:#bec2cb;margin-top:13px}.warning{color:#ffcf94;font-weight:650}
+[hidden]{display:none!important}
+</style></head>
+<body><main><div class="panel">
+<header><h1>Heide Park ·<br>Wartezeit-Rechner</h1><span class="chip">Offlinefähig</span></header>
+<section class="form">
+<div class="field"><label for="ride">1. Attraktion auswählen</label>
+<select id="ride" ><option value="colossos">Colossos – Kampf der Giganten</option>
+<option value="krake">KRAKE</option>
+<option value="flug">Flug der Dämonen</option>
+<option value="desert">Desert Race</option>
+<option value="bigloop">Big Loop</option>
+<option value="scream">Scream</option>
+<option value="toxic">Toxic Garden</option>
+<option value="bob">Bobbahn</option>
+<option value="gruft">Dämonen Gruft</option>
+<option value="ghost">Ghostbusters 5D</option>
+<option value="grotten">Grottenblitz</option>
+<option value="indy">Indy-Blitz</option>
+<option value="screamie">Screamie</option>
+<option value="bounty">Bounty</option>
+<option value="break">Breaker (Breakdance)</option>
+<option value="dampf">Dampfkarussell</option>
+<option value="laola">La Ola</option>
+<option value="magic">Magic</option>
+<option value="nostalgie">Nostalgiekarussell</option>
+<option value="wüsten">Wüstenflitzer</option>
+<option value="riesenrad">Western-Riesenrad</option>
+<option value="rafting">Mountain Rafting</option>
+<option value="wildwasser">Wildwasserbahn</option>
+<option value="floss">Floßfahrt</option>
+<option value="topi">ToPiLauLa-Schlacht</option>
+<option value="kaept">Käpt’ns Törn</option>
+<option value="express">Heide Park Express</option>
+<option value="monorail">Monorail</option>
+<option value="panorama">Panoramabahn</option>
+<option value="drachen">Drachengrotte</option>
+<option value="wolken">Grobians Wolkenspringer</option>
+<option value="hicks">Hicks Himmelsstürmer</option>
+<option value="wasserflieger">Raffnuss &amp; Taffnuss Wasserflieger</option>
+<option value="opazug">Opa Pigs Zugfahrt</option>
+<option value="ballon">Peppas Ballonfahrt</option>
+<option value="boot">Peppas Bootsfahrt</option>
+<option value="dino">Schorschs Dino-Abenteuer</option>
+<option value="peppahaus">Peppas Haus (Besuch)</option>
+<option value="peppameet">Peppa Meet &amp; Greet</option>
+<option value="dragonmeet">Drachenzähmen Meet &amp; Greet</option>
+<option value="custom">Eigene Werte eingeben</option></select></div>
+<div class="grid">
+ <div class="field"><label for="count">2. Züge / Fahrzeuge</label><select id="count"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+ <div class="field"><label for="seats">3. Sitzplätze je Fahrzeug</label><input id="seats" type="number" min="1" step="1" inputmode="numeric" placeholder="Anzahl"></div>
+</div>
+<div class="field"><label for="starts">4. Tatsächliche Starts pro Stunde (gesamt)</label><input id="starts" type="number" min="0" step="1" inputmode="numeric" placeholder="z. B. 15"></div>
+<p class="hint">Wenn bekannt, hier die <b>gesamten Abfahrten aller Fahrzeuge</b> in einer Stunde eintragen. Die tatsächlichen Starts haben Vorrang vor der Schätzung über die Fahrtdauer. Leer lassen, wenn unbekannt.</p>
+<div id="shortQueue" class="queue-area" hidden>
+ <h2>5. Kurzer Wartebereich – Magic / Breaker</h2>
+ <div class="field"><label for="queueMode">Aktueller Andrang</label>
+ <select id="queueMode">
+  <option value="0">Wartebereich leer</option>
+  <option value="24">Wartebereich halb voll – ca. 24 Pers.</option>
+  <option value="48">Wartebereich voll – ca. 48 Pers.</option>
+  <option value="72">Wartebereich voll + halbe Box – ca. 72 Pers.</option>
+  <option value="96">Wartebereich + Box voll – ca. 96 Pers.</option>
+  <option value="custom">Andere Personenzahl eingeben</option>
+ </select></div>
+ <div class="field" id="queueCustomWrap" hidden><label for="queueCustom">Wartende Personen</label><input id="queueCustom" type="number" min="0" step="1" inputmode="numeric" value="48"></div>
+ <p class="hint">Nach deiner Beobachtung: voller Wartebereich ≈ 48, volle zusätzliche Box ≈ weitere 48 Personen. Bei Breaker bleiben die Sitzplätze pro Fahrt separat (32).</p>
+</div>
+<div id="regularQueue" class="field"><label for="fill">5. Füllstand der Warteschlange</label><select id="fill">
+<option value="10">10 %</option><option value="20">20 %</option><option value="30">30 %</option>
+<option value="40">40 %</option><option value="50">50 % – Halb voll</option><option value="60">60 %</option>
+<option value="70">70 %</option><option value="80">80 %</option><option value="90">90 %</option>
+<option value="100">100 % – Voll</option><option value="120">120 % – Überlauf</option></select></div>
+<details><summary>Weitere Einstellungen: Fahrtdauer und Betrieb</summary>
+ <div class="grid">
+  <div class="field"><label for="rideMins">Fahrtdauer (Minuten)</label><input id="rideMins" type="number" min="0.1" step="0.1" inputmode="decimal"></div>
+  <div class="field"><label for="changeMins">Ein-/Ausstieg und Abfertigung (Min.)</label><input id="changeMins" type="number" min="0" step="0.1" inputmode="decimal"></div>
+ </div>
+ <p class="hint">Beispielwerte bei Magic und Breaker: 2,5 Min. Fahrt + 1,5 Min. Abfertigung. <b>Keine bestätigten Heide-Park-Zeiten.</b> Bitte vor Ort anpassen. Wenn Starts/Stunde angegeben sind, dienen diese Zeiten nur zur Orientierung.</p>
+ <div id="capacityWrap" class="field"><label for="queueCapacity">Personen bei 100 % Warteschlange</label><input id="queueCapacity" type="number" min="1" step="1" inputmode="numeric"></div>
+ <div class="field"><label for="express">Express-Pass-Zulauf</label><select id="express"><option value="1">Normal</option><option value="1.15">Hoch (+15 %)</option><option value="1.30">Sehr hoch (+30 %)</option></select></div>
+ <label><input type="checkbox" id="delay"> Betriebliche Verzögerung (+15 %)</label>
+</details>
+</section>
+<button id="calc" type="button">Wartezeit berechnen</button>
+<section class="result" aria-live="polite" aria-atomic="true"><div class="label">EMPFOHLENE WARTEZEIT</div>
+<strong id="result">–</strong><div class="unit">Minuten</div><div class="meta" id="meta">Sitzplätze und Warteschlange eingeben.</div></section>
+<p class="footer">Schätzung auf Basis deiner Eingaben, keine KI- oder Live-Parkdaten. Die Berechnung erfolgt sofort auf dem Gerät. Die erfassten Starts pro Stunde sind für eine aktuelle Schätzung aussagekräftiger als eine pauschale Fahrtdauer. Alle Werte können verändert werden.</p>
+</div></main>
+<script>
+(function(){
+'use strict';
+var PRESETS={"colossos": {"queue": 850, "seats": "", "count": 2}, "krake": {"queue": 500, "seats": ""}, "flug": {"queue": 600, "seats": ""}, "desert": {"queue": 400, "seats": ""}, "bigloop": {"queue": 350, "seats": ""}, "scream": {"queue": 400, "seats": ""}, "toxic": {"queue": 350, "seats": ""}, "bob": {"queue": 450, "seats": ""}, "gruft": {"queue": 300, "seats": ""}, "ghost": {"queue": 300, "seats": ""}, "grotten": {"queue": 300, "seats": ""}, "indy": {"queue": 230, "seats": ""}, "screamie": {"queue": 220, "seats": ""}, "bounty": {"queue": 300, "seats": ""}, "break": {"queue": 48, "seats": 32, "ride": 2.5, "turnaround": 1.5, "count": 1}, "dampf": {"queue": 250, "seats": ""}, "laola": {"queue": 240, "seats": ""}, "magic": {"queue": 48, "seats": 48, "ride": 2.5, "turnaround": 1.5, "count": 1}, "nostalgie": {"queue": 180, "seats": ""}, "wüsten": {"queue": 160, "seats": ""}, "riesenrad": {"queue": 360, "seats": ""}, "rafting": {"queue": 900, "seats": ""}, "wildwasser": {"queue": 650, "seats": ""}, "floss": {"queue": 250, "seats": ""}, "topi": {"queue": 300, "seats": ""}, "kaept": {"queue": 220, "seats": ""}, "express": {"queue": 320, "seats": ""}, "monorail": {"queue": 400, "seats": ""}, "panorama": {"queue": 360, "seats": ""}, "drachen": {"queue": 320, "seats": ""}, "wolken": {"queue": 220, "seats": ""}, "hicks": {"queue": 240, "seats": ""}, "wasserflieger": {"queue": 200, "seats": ""}, "opazug": {"queue": 240, "seats": ""}, "ballon": {"queue": 200, "seats": ""}, "boot": {"queue": 260, "seats": ""}, "dino": {"queue": 230, "seats": ""}, "peppahaus": {"queue": 180, "seats": ""}, "peppameet": {"queue": 120, "seats": ""}, "dragonmeet": {"queue": 120, "seats": ""}};
+var ids=['ride','count','seats','starts','fill','queueMode','queueCustom','rideMins','changeMins','queueCapacity','express','delay'];
+function $(id){return document.getElementById(id);}
+var memory={};
+try{memory=JSON.parse(localStorage.getItem('heide-operator-starts-v1')||'{}')||{};}catch(e){}
+function save(){
+try{localStorage.setItem('heide-operator-starts-v1',JSON.stringify(memory));}catch(e){}
+}
+function setIf(id,value){
+if(value!==undefined&&value!==null)$(id).value=String(value);
+}
+function getNumber(id){return Number($(id).value.replace(',','.'));}
+function rideChange(){
+ var key=$('ride').value,base=PRESETS[key]||{queue:800,seats:'',count:1};
+ var old=memory[key]||{};
+ setIf('count',old.count!==undefined?old.count:(base.count||1));
+ setIf('seats',old.seats!==undefined?old.seats:base.seats);
+ setIf('starts',old.starts!==undefined?old.starts:'');
+ setIf('fill',old.fill!==undefined?old.fill:50);
+ setIf('queueMode',old.queueMode!==undefined?old.queueMode:'48');
+ setIf('queueCustom',old.queueCustom!==undefined?old.queueCustom:48);
+ setIf('rideMins',old.rideMins!==undefined?old.rideMins:(base.ride||2.5));
+ setIf('changeMins',old.changeMins!==undefined?old.changeMins:(base.turnaround||2.5));
+ setIf('queueCapacity',old.queueCapacity!==undefined?old.queueCapacity:base.queue);
+ setIf('express',old.express!==undefined?old.express:1);
+ $('delay').checked=!!old.delay;
+ showQueue();
+ calculate();
+}
+function showQueue(){
+ var short=$('ride').value==='magic'||$('ride').value==='break';
+ $('shortQueue').hidden=!short;$('regularQueue').hidden=short;$('capacityWrap').hidden=short;
+ $('queueCustomWrap').hidden=$('queueMode').value!=='custom';
+}
+function calculate(){
+ showQueue();
+ var key=$('ride').value;
+ var data={};
+ for(var i=1;i<ids.length;i++){
+  var id=ids[i];
+  data[id]=id==='delay'?$('delay').checked:$(id).value;
+ }
+ memory[key]=data;save();
+ var seats=getNumber('seats');
+ var count=getNumber('count');
+ var startsField=$('starts').value.trim();
+ var starts=startsField===''?NaN:getNumber('starts');
+ var mins=getNumber('rideMins');
+ var change=getNumber('changeMins');
+ var short=key==='magic'||key==='break';
+ var people=short?($('queueMode').value==='custom'?getNumber('queueCustom'):getNumber('queueMode')):getNumber('queueCapacity')*getNumber('fill')/100;
+ var exp=getNumber('express');
+ if(!(seats>0&&count>0&&people>=0&&exp>0)||
+    !(startsField===''?(mins>0&&change>=0):(starts>0))){
+  $('result').textContent='–';
+  $('meta').textContent='Bitte gültige Sitzplätze und Starts pro Stunde (oder Fahrtdauer + Abfertigung) eingeben.';
+  return;
+ }
+ // Observed starts are TOTAL across all vehicles; don't multiply by count again.
+ var totalStarts=startsField!==''?starts:count*60/(mins+change);
+ var pph=totalStarts*seats;
+ var wait=pph>0?people/pph*60*exp*($('delay').checked?1.15:1):NaN;
+ if(!isFinite(wait)){
+  $('result').textContent='–';$('meta').textContent='Ungültige Eingabe';return;
+ }
+ var rounded=people===0?0:Math.max(5,Math.ceil(wait/5)*5);
+ $('result').textContent=String(rounded);
+ $('meta').textContent=Math.round(people)+' Wartende · ca. '+Math.round(pph)+' Personen/Stunde · '+(startsField!==''?'gemessene Starts':'aus Fahrtdauer geschätzt');
+}
+$('ride').addEventListener('change',rideChange);
+for(var i=1;i<ids.length;i++){
+ (function(id){$(id).addEventListener('input',calculate);$(id).addEventListener('change',calculate);})(ids[i]);
+}
+$('calc').addEventListener('click',calculate);
+rideChange();
+})();
+</script>
+<noscript><p>Bitte JavaScript in Safari aktivieren. Auf GitHub Pages funktioniert die Berechnung direkt im Browser.</p></noscript>
+</body></html>
